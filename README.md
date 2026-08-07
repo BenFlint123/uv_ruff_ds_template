@@ -4,31 +4,82 @@ A lightweight scaffold for data-science work: `uv` + Ruff + Jupyter,
 structured so you can clone this, get a dataset, and start working
 immediately.
 
-> **Status:** Template scaffold. `lib/` is currently a stub. Replace the
-> placeholder name and add your own modules as patterns emerge from your
-> notebooks.
+> **Status:** Template scaffold. `lib/` is a stub for whatever reusable
+> code you like to bring into your analysis — add modules to it as
+> patterns emerge from your notebooks. Leave the name as-is unless you'd
+> prefer something more specific.
 
 ---
 
 ## Using this template
 
-This repository is a generic scaffold. After copying it (fork, "Use this
-template", or `git clone`) do the following before adding your own code:
+How you acquire the template depends on whether you're free to create the
+destination repo yourself, or your org requires it to be created some
+other way first (e.g. through an internal portal), which usually means it
+already exists with its own initial commit before you get to it.
+
+**If you can create the destination repo directly:** use GitHub's "Use
+this template" button, or:
+
+```powershell
+gh repo create my-project --template BenFlint123/uv_ruff_ds_template --clone
+cd my-project
+```
+
+**If the destination repo already exists** (so "Use this template" can't
+target it), import the template's files with a squash-merge instead —
+this pulls in the current file contents as a single clean commit, without
+importing the template's own commit history:
+
+```powershell
+git clone <your-new-repo-url>
+cd <your-new-repo>
+git remote add template https://github.com/BenFlint123/uv_ruff_ds_template.git
+git fetch template
+git checkout -b add-template-scaffold
+git merge --squash --allow-unrelated-histories template/main
+```
+
+This will likely conflict on files your repo already has (commonly
+`README.md` and `.gitignore`, if it was created with either). Check
+`git status` for the conflicted files, open each one, and — assuming you
+want the template's version — resolve it with:
+
+```powershell
+git checkout --theirs <path>
+git add <path>
+```
+
+Then commit, push the branch, and open a pull request into your default
+branch so CI runs on it before you merge:
+
+```powershell
+git commit -m "Add data-science project scaffold from template"
+git push -u origin add-template-scaffold
+```
+
+**Either way, once you have the template's files in your repo**, work
+through this checklist before adding your own code:
 
 1. **Pick a package name** (PEP 8: lowercase, ideally one word) — or leave
    it as `lib`; it's generic on purpose and doesn't need renaming. If you
    do rename, global-replace `lib` across the workspace, including:
    - the directory `lib/`
-   - `pyproject.toml` (`name`, hatch `packages`, ruff `known-first-party`,
-     `--cov=…`, `coverage.run.source`)
+   - `pyproject.toml` (`name`, hatch `packages`, ruff `src` /
+     `known-first-party`, `--cov=…`, `coverage.run.source`)
    - `tests/test_smoke.py`
    - `.github/copilot-instructions.md`, `.github/instructions/*.md`
    - `.pre-commit-config.yaml` (`files:` patterns)
-2. **Set the project description** in `pyproject.toml`.
+   - `README.md` and `CONTRIBUTING.md` prose references
+2. **Set the project name and description** in `README.md` (the title and
+   the `cd <repo>` line in the clone snippet) and `pyproject.toml`
+   (`description`).
 3. **Update the repository URL** in `pyproject.toml` (`[project.urls]
-   Repository`) and in `.github/ISSUE_TEMPLATE/config.yml`.
-4. **Review `LICENSE`** and **`.github/CODEOWNERS`** — update the
-   copyright holder / owner if this isn't your project.
+   Repository`), `.github/ISSUE_TEMPLATE/config.yml` (both `url:` fields),
+   and `SECURITY.md` (the "Report a vulnerability" link).
+4. **Review `LICENSE`**, **`.github/CODEOWNERS`**, and the `authors` field
+   in `pyproject.toml` — update the copyright holder / owner if this isn't
+   your project.
 5. Run `uv sync --all-groups` to generate a fresh `uv.lock`.
 
 ---
