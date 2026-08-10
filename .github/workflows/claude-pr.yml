@@ -25,7 +25,7 @@ jobs:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: Run Claude
-        uses: anthropics/claude-code-action@4633baf5267540f3f8cb58b684f79901d564c280 # v1
+        uses: anthropics/claude-code-action@1623c36729ac1cd5895198cded705a287de7db79 # v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           track_progress: true
