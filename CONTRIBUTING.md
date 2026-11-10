@@ -5,19 +5,17 @@
 After cloning the repository:
 
 ```powershell
-uv python install 3.11
-uv python pin 3.11
-uv venv
 uv sync --all-groups
 uv run pre-commit install
-uv run pre-commit install --hook-type pre-push
 ```
 
-- `uv` will fetch and manage Python 3.11 — no system install required.
-- `uv sync --all-groups` installs `lib` (editable) plus the `dev`
-  dependency group, creating `.venv/` and `uv.lock`.
-- The two `pre-commit install` commands register the git hooks: lint/format
-  on commit, tests on push.
+- `uv sync --all-groups` creates `.venv/`, downloading the Python version
+  pinned in `.python-version` (3.11) if needed, so no system Python is
+  required. It then installs `lib` in editable mode along with the `dev`
+  dependency group.
+- `pre-commit install` registers both git hooks: lint/format on commit and
+  tests on push. Both stages are listed under `default_install_hook_types`
+  in `.pre-commit-config.yaml`.
 
 ## Adding a new module
 

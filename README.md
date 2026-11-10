@@ -4,123 +4,119 @@ A lightweight scaffold for data-science work: `uv` + Ruff + Jupyter,
 structured so you can clone this, get a dataset, and start working
 immediately.
 
-> **Status:** Template scaffold. `lib/` is a stub for whatever reusable
-> code you like to bring into your analysis — add modules to it as
-> patterns emerge from your notebooks. Leave the name as-is unless you'd
-> prefer something more specific.
+> **Template notice:** if you're starting a new project from this
+> template, follow [Creating a project from this template](#creating-a-project-from-this-template)
+> and then delete that section along with this notice. Everything from
+> [Quick start](#quick-start) onwards is written for the project itself.
 
 ---
 
-## Using this template
+## Creating a project from this template
 
-How you acquire the template depends on whether you're free to create the
-destination repo yourself, or your org requires it to be created some
-other way first (e.g. through an internal portal), which usually means it
-already exists with its own initial commit before you get to it.
+### 1. Get the template's files into your repo
 
-**If you can create the destination repo directly:** use GitHub's "Use
-this template" button, or:
+**A — you can create the repo yourself.** Click **Use this template** on
+GitHub, or:
 
 ```powershell
-gh repo create my-project --template BenFlint123/uv_ruff_ds_template --clone
-cd my-project
+gh repo create <project-name> --template BenFlint123/uv_ruff_ds_template --private --clone
+cd <project-name>
 ```
 
-**If the destination repo already exists** (so "Use this template" can't
-target it), import the template's files with a squash-merge instead —
-this pulls in the current file contents as a single clean commit, without
-importing the template's own commit history:
+**B — the repo already exists** (e.g. your org created it through a
+portal, so it already has its own initial commit). Squash the template's
+files onto a branch as one change, with none of the template's history:
 
 ```powershell
-git clone <your-new-repo-url>
-cd <your-new-repo>
+git clone <your-repo-url>
+cd <repo-name>
+git checkout -b add-template-scaffold
 git remote add template https://github.com/BenFlint123/uv_ruff_ds_template.git
 git fetch template
-git checkout -b add-template-scaffold
 git merge --squash --allow-unrelated-histories template/main
+git remote remove template
 ```
 
-This will likely conflict on files your repo already has (commonly
-`README.md` and `.gitignore`, if it was created with either). Check
-`git status` for the conflicted files, open each one, and — assuming you
-want the template's version — resolve it with:
+Files your repo already had (typically `README.md`, `.gitignore`,
+`LICENSE`) will conflict. Run `git status` to list them, and take the
+template's version of each with:
 
 ```powershell
 git checkout --theirs <path>
 git add <path>
 ```
 
-Then commit, push the branch, and open a pull request into your default
-branch so CI runs on it before you merge:
+Don't commit yet. Customise first (step 2), then commit (step 4).
+
+### 2. Customise it
+
+- **Name and description:** the title and intro of this README, the
+  headings of `CONTRIBUTING.md`, `CLAUDE.md` and
+  `.github/copilot-instructions.md`, and `description` in `pyproject.toml`.
+- **Repository URL:** `[project.urls] Repository` in `pyproject.toml`,
+  both `url:` fields in `.github/ISSUE_TEMPLATE/config.yml`, and the
+  "Report a vulnerability" link in `SECURITY.md`.
+- **Ownership:** `LICENSE`, `.github/CODEOWNERS`, and `authors` in
+  `pyproject.toml`, if this isn't your project.
+- **Package name (optional):** `lib` is deliberately generic, so you
+  can keep it. To rename it (PEP 8: lowercase, ideally one word),
+  replace `lib` everywhere it appears:
+  - the `lib/` directory
+  - `pyproject.toml` (`name`, hatch `packages`, ruff `src` /
+    `known-first-party`, `--cov=…`, `coverage.run.source`)
+  - `tests/test_smoke.py`
+  - `.pre-commit-config.yaml` (`files:` patterns)
+  - `.github/copilot-instructions.md`, `.github/instructions/*.md`
+  - prose in `README.md` and `CONTRIBUTING.md`
+
+### 3. Set up the environment and check it works
+
+Run the [Quick start](#quick-start) steps from `uv sync` onwards (you
+already have the repo). `uv sync` updates `uv.lock` to match your edits,
+and `pytest` confirms the package still imports.
+
+### 4. Delete this section, then commit
+
+Remove this section and the template notice at the top, then:
 
 ```powershell
+git add -A
 git commit -m "Add data-science project scaffold from template"
-git push -u origin add-template-scaffold
+git push -u origin HEAD
 ```
 
-**Either way, once you have the template's files in your repo**, work
-through this checklist before adding your own code:
-
-1. **Pick a package name** (PEP 8: lowercase, ideally one word) — or leave
-   it as `lib`; it's generic on purpose and doesn't need renaming. If you
-   do rename, global-replace `lib` across the workspace, including:
-   - the directory `lib/`
-   - `pyproject.toml` (`name`, hatch `packages`, ruff `src` /
-     `known-first-party`, `--cov=…`, `coverage.run.source`)
-   - `tests/test_smoke.py`
-   - `.github/copilot-instructions.md`, `.github/instructions/*.md`
-   - `.pre-commit-config.yaml` (`files:` patterns)
-   - `README.md` and `CONTRIBUTING.md` prose references
-2. **Set the project name and description** in `README.md` (the title and
-   the `cd <repo>` line in the clone snippet) and `pyproject.toml`
-   (`description`).
-3. **Update the repository URL** in `pyproject.toml` (`[project.urls]
-   Repository`), `.github/ISSUE_TEMPLATE/config.yml` (both `url:` fields),
-   and `SECURITY.md` (the "Report a vulnerability" link).
-4. **Review `LICENSE`**, **`.github/CODEOWNERS`**, and the `authors` field
-   in `pyproject.toml` — update the copyright holder / owner if this isn't
-   your project.
-5. Run `uv sync --all-groups` to generate a fresh `uv.lock`.
+For **B**, open a pull request from `add-template-scaffold` into your
+default branch, so CI runs before you merge.
 
 ---
 
 ## Quick start
 
-This project uses [`uv`](https://docs.astral.sh/uv/) to manage the Python
-toolchain, virtual environment and dependencies. You do **not** need a
-system-wide Python 3.11 — `uv` will fetch one for you.
+You need [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
+installed. You don't need a system Python: `uv` downloads the version
+pinned in `.python-version` (3.11) automatically.
 
 ```powershell
-# 1. Install uv (one-time, if you don't have it):
-#    https://docs.astral.sh/uv/getting-started/installation/
-
-# 2. Clone & enter the repo
 git clone <your-repo-url>
-cd uv_ruff_ds_template
+cd <repo-name>
 
-# 3. Install Python 3.11 (managed by uv) and pin the project to it
-uv python install 3.11
-uv python pin 3.11
-
-# 4. Create the venv and install the project + dev dependencies
-uv venv
+# Create .venv (fetching Python 3.11 if needed), then install the
+# project in editable mode along with the dev tools.
 uv sync --all-groups
 
-# 5. Install pre-commit hooks
+# Register the git hooks: lint/format on commit, tests on push.
 uv run pre-commit install
-uv run pre-commit install --hook-type pre-push
 ```
 
-Verify the install:
+Check that everything works:
 
 ```powershell
-uv run python -c "import lib; print('lib import OK')"
-uv run pytest -q
+uv run pytest -q        # includes a smoke test that `import lib` works
 uv run jupyter lab
 ```
 
-Drop your dataset into `data/raw/`, open a notebook under `notebooks/`, and
-`import lib` works immediately — no extra setup.
+Then put your dataset in `data/raw/`, start a notebook under
+`notebooks/`, and `import lib` will work straight away.
 
 ## Project structure & workflow
 
